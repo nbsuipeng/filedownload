@@ -4,10 +4,7 @@ import com.sun.deploy.net.HttpRequest;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 
 public class ImageDownload implements FileDownload {
     private URL u;
@@ -20,15 +17,31 @@ public class ImageDownload implements FileDownload {
 
         u=new URL(url);
         long l = System.currentTimeMillis();
-//        URLConnection urlConnection = u.openConnection();
-
+        //打开链接
+        URLConnection urlConnection = u.openConnection();
+        /**
+         * 设置超时时间
+         */
+        urlConnection.setConnectTimeout(2000);
         long l1 = System.currentTimeMillis();
         System.out.println("连接"+u.getFile()+"资源耗时:"+(l1-l)+"毫秒");
 
         l = System.currentTimeMillis();
-        InputStream inputStream = u.openStream();
+        InputStream inputStream=null;
+        try
+        {
+            inputStream= urlConnection.getInputStream();
+        }catch (SocketTimeoutException e)
+        {
+            //e.printStackTrace();
+            //连接失败，返回false
+            System.out.println(u.getFile()+"下载失败");
+            return false;
+        }
         l1 = System.currentTimeMillis();
         System.out.println("连接"+u.getFile()+"资源耗时:"+(l1-l)+"毫秒");
+
+
         //目录不存在就创造
         File f=new File(des);
         if(!f.exists()) f.mkdirs();
