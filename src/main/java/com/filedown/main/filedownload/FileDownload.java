@@ -1,6 +1,9 @@
 package com.filedown.main.filedownload;
 
+import java.io.IOException;
+import java.net.URL;
+
 public interface FileDownload {
-    public String fileURL = null;
-    
+
+    boolean fileDownload(String url, String des) throws IOException;
 }
